@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using FVRcal.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FVRcal.Controllers
@@ -11,10 +14,7 @@ namespace FVRcal.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private DatabaseContext db = new DatabaseContext();
 
         private readonly ILogger<WeatherForecastController> _logger;
 
@@ -25,13 +25,15 @@ namespace FVRcal.Controllers
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
-        {
+        { 
             var rng = new Random();
+            String data = db.Storage_Type.FirstOrDefault(x => x.st_type_id == 1).type;
+
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
+                Summary = data
             })
             .ToArray();
         }
