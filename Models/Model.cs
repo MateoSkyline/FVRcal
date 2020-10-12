@@ -34,6 +34,9 @@ namespace FVRcal.Models
         public string firstname { get; set; }
         [StringLength(60)]
         public string lastname { get; set; }
+        [StringLength(120)]
+        [Required]
+        public string email { get; set; }
         [StringLength(30)]
         public string username { get; set; }
         [StringLength(6)]

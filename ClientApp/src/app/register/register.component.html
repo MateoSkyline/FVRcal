@@ -1,0 +1,52 @@
+<div class="spinner" *ngIf="!loaded">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div>
+  <form [formGroup]="registerForm" (ngSubmit)="RegisterAccount(registerForm.value)">
+    <mat-form-field>
+      <mat-label>Your first name</mat-label>
+      <input matInput #iFirstname minlength="3" maxlength="60" placeholder="First name" formControlName="firstname" [required]="true" />
+      <mat-hint>{{ iFirstname.value?.length || 0 }}/60</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Your last name</mat-label>
+      <input matInput #iLastname minlength="2" maxlength="60" placeholder="Last name" formControlName="lastname" [required]="true" />
+      <mat-hint>{{ iLastname.value?.length || 0 }}/60</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Your e-mail address</mat-label>
+      <input matInput #iEmail minlength="{{ iEmail.value == lastEmailUsed ? 121 : 5 }}" maxlength="120" placeholder="E-Mail" type="email" formControlName="email" [required]="true" [email]="true" />
+      <mat-hint>{{ iEmail.value?.length || 0 }}/120</mat-hint>
+      <mat-error *ngIf="iEmail.value == lastEmailUsed">This e-mail is already in use.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Your login</mat-label>
+      <input matInput #iUsername minlength="3" maxlength="30" placeholder="Username" formControlName="username" [required]="true" />
+      <mat-hint>{{ iUsername.value?.length || 0 }}/30</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Your strong password</mat-label>
+      <input matInput #iPassword minlength="{{ (passwordComplex < 70) ? 513 : 8 }}" maxlength="512" placeholder="Password" type="password" formControlName="password" [required]="true" (keyup)="checkPasswordStrength(iPassword.value)" />
+      <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
+      <mat-error>Password is too weak.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Your strong password once again</mat-label>
+      <input matInput #iPassword2 minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="password2" [required]="true" pattern="{{ iPassword.value }}" />
+      <mat-hint>8/{{ iPassword2.value?.length || 0 }}</mat-hint>
+      <mat-error>Passwords do not match.</mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button [disabled]="!registerForm.valid">Register</button>
+  </form>
+
+  <mat-chip-list *ngIf="databaseProblem">
+    <mat-chip color="warn">There was an undefined problem while creating your account. Please try again later, and if the problem persists, please contact customer service.</mat-chip>
+  </mat-chip-list>
+</div>
