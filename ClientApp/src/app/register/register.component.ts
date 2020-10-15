@@ -12,7 +12,7 @@ import { Router } from '@angular/router'
 export class RegisterComponent implements OnInit {
   public acc: Account[];
 
-  registerForm;
+  registerForm: any;
   passwordComplex: number = 0;
   loaded: boolean = true;
   registerStatus: number = -1;
@@ -37,11 +37,11 @@ export class RegisterComponent implements OnInit {
 
   RegisterAccount(userData) {
     this.loaded = false;
-    this.http.post(this.baseUrl + 'RegisterAccount', userData).subscribe(result => {
+    this.http.post(this.baseUrl + 'api/Account/Register', userData).subscribe(result => {
       if (!result) {
         console.log("Register successful!");
         this.loaded = true;
-        this.router.navigate(['/counter']);
+        this.router.navigateByUrl('/login');
       }
       else if (result == 1) {
         console.log("Register failed. Email problem.");
