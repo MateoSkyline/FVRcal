@@ -15,6 +15,7 @@ export class CounterComponent {
     this.service.getUserProfile().subscribe(
       res => {
         this.userDetails = res;
+        console.log(this.userDetails);
       },
       err => {
         console.error(err);

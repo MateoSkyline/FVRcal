@@ -14,10 +14,8 @@ namespace FVRcal.Controllers
     [ApiController]
     public class UserProfileController : ControllerBase
     {
-        private DatabaseContext db = new DatabaseContext();
-        private UserManager<Account> _userManager;
-
-        public UserProfileController(UserManager<Account> userManager)
+        private UserManager<ApplicationUser> _userManager;
+        public UserProfileController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
@@ -25,17 +23,15 @@ namespace FVRcal.Controllers
         [HttpGet]
         public async Task<Object> GetUserProfile()
         {
-            var papiez = User.Claims;
-            var d0pa = User.Identity.IsAuthenticated;
-            int userID = Int32.Parse(User.Claims.First(c => c.Type == "UserID").Value);
-            Account user = await db.Accounts.Where(a => a.user_id == userID).SingleOrDefaultAsync();
+            string userID = User.Claims.First(c => c.Type == "UserID").Value;
+            var user = await _userManager.FindByIdAsync(userID);
             return new
             {
-                user.firstname,
-                user.lastname,
-                user.email,
-                user.username,
-                user.usercode
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.UserName,
+                user.UserCode
             };
         }
     }
