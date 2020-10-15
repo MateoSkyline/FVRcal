@@ -12,6 +12,8 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
 
 namespace FVRcal.Controllers
 {
@@ -20,65 +22,42 @@ namespace FVRcal.Controllers
     public class AccountController : ControllerBase
     {
         private DatabaseContext db = new DatabaseContext();
+        private UserManager<ApplicationUser> _userManager;
+        private SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationSettings _appSettings;
+        
 
-        public AccountController(IOptions<ApplicationSettings> appSettings)
+        public AccountController(IOptions<ApplicationSettings> appSettings, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _appSettings = appSettings.Value;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [HttpPost]
         [Route("Register")]
-        public int RegisterAccount(Account account)
+        //POST : /api/Account/Register
+        public async Task<Object> PostApplicationUser(Account model)
         {
-            const String DEFAULT_PERMISSIONS = "all";
-            try 
-            { 
-                account.salt = new Random().Next(100000000, 999999999).ToString();
-                account.password = ComputeSHA256Hash(ComputeSHA256Hash(account.password) + ComputeSHA256Hash(account.salt));
-                account.usercode = GenerateNewRandom();      
-            
-                if (EmailExists(account.email)) //This email already exists
-                {
-                    account.email = null;
-                    return 1; //Email problem
-                }
-                account.permissions = DEFAULT_PERMISSIONS;
-                db.Accounts.Add(account);
+            var applicationUser = new ApplicationUser()
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                UserName = model.UserName,
+                UserCode = model.UserCode,
+                SecuritySalt = model.SecuritySalt
+            };
 
-                db.SaveChanges(); 
-                return 0; //Everything went OK and account has been created
-            }
-            catch (Exception)
+            try
             {
-                return 2; //Problem with creating account
+                var result = await _userManager.CreateAsync(applicationUser, model.Password);
+                return Ok(result);
             }
-        }
-
-        public static string ComputeSHA256Hash(string text)
-        {
-            using(var sha256 = new SHA256Managed())
+            catch(Exception ex)
             {
-                return BitConverter.ToString(sha256.ComputeHash(Encoding.UTF8.GetBytes(text))).Replace("-", "");
+                return BadRequest(ex);
             }
-        }
-        private string GenerateNewRandom()
-        {
-            Random generator = new Random();
-            String r = generator.Next(0, 1000000).ToString("D6");
-            if (db.Accounts.Any(c => c.usercode == r))
-            {
-                r = GenerateNewRandom();
-            }
-            return r;
-        }
-        private bool EmailExists(String email)
-        {
-            return db.Accounts.Any(e => e.email == email);
-        }
-        public static string MakePasswordHash(string password, string salt)
-        {
-            return ComputeSHA256Hash(ComputeSHA256Hash(password) + ComputeSHA256Hash(salt));
         }
 
 
@@ -86,17 +65,17 @@ namespace FVRcal.Controllers
         [Route("Login")]
         public async Task<IActionResult> Login(Account account)
         {
-            var user = await db.Accounts.Where(e => e.email == account.email).SingleOrDefaultAsync();
-            if(user != null && user.password == MakePasswordHash(account.password, user.salt))
+            var user = await _userManager.FindByEmailAsync(account.Email);
+            if (user != null && await _userManager.CheckPasswordAsync(user, account.Password))
             {
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new Claim("UserID", user.user_id.ToString())
+                        new Claim("UserID", user.Id.ToString())
                     }),
                     Expires = DateTime.UtcNow.AddMinutes(5),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JWT_Secret)), SecurityAlgorithms.HmacSha256Signature)                    
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JWT_Secret)), SecurityAlgorithms.HmacSha256Signature)
                 };
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var securityToken = tokenHandler.CreateToken(tokenDescriptor);

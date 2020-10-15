@@ -9,10 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity.UI;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace FVRcal
 {
@@ -49,6 +51,28 @@ namespace FVRcal
                     .AllowAnyHeader());
             });
 
+            services.AddDbContext<AuthenticationContext>(options =>
+                options.UseMySQL(Configuration.GetConnectionString("DatabaseConnectionString")));
+
+            services.AddDefaultIdentity<ApplicationUser>()
+                .AddEntityFrameworkStores<AuthenticationContext>();
+
+            services.AddDbContext<DatabaseContext>(options =>
+                options.UseMySQL(Configuration.GetConnectionString("DatabaseConnectionString")));
+
+            services.Configure<IdentityOptions>(options =>
+                {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequiredLength = 8;
+                    options.User.RequireUniqueEmail = true;
+                }
+            );
+
+            services.AddCors();
+
             services.AddAuthentication(x =>{
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -64,10 +88,7 @@ namespace FVRcal
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
                 };
-            });
-
-            services.AddDbContext<DatabaseContext>(options =>
-                options.UseMySQL(Configuration.GetConnectionString("DatabaseConnectionString")));
+            });            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,13 +114,15 @@ namespace FVRcal
 
             app.UseRouting();
             app.UseCors("CorsPolicy");
+            app.UseAuthentication();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-            });
+            });            
 
             app.UseSpa(spa =>
             {
