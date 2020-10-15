@@ -27,7 +27,7 @@ namespace FVRcal.Controllers
         public IEnumerable<WeatherForecast> Get()
         { 
             var rng = new Random();
-            String data = db.Storage_Type.FirstOrDefault(x => x.st_type_id == 1).type;
+            String data = "kupa";
 
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
