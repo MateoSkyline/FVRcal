@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System;
 
 namespace FVRcal
 {
@@ -28,6 +29,8 @@ namespace FVRcal
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
 
@@ -36,7 +39,6 @@ namespace FVRcal
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            
             services.AddControllersWithViews();
 
             services.AddCors(options =>
@@ -45,6 +47,23 @@ namespace FVRcal
                     builder => builder.AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader());
+            });
+
+            services.AddAuthentication(x =>{
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x => {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = false;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:JWT_Secret"].ToString())),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                };
             });
 
             services.AddDbContext<DatabaseContext>(options =>

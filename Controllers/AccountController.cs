@@ -7,19 +7,31 @@ using FVRcal.Models;
 using Org.BouncyCastle.Crypto;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace FVRcal.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class RegisterAccountController : ControllerBase
+    [Route("api/[controller]")]
+    public class AccountController : ControllerBase
     {
         private DatabaseContext db = new DatabaseContext();
-        const String DEFAULT_PERMISSIONS = "all";
+        private readonly ApplicationSettings _appSettings;
+
+        public AccountController(IOptions<ApplicationSettings> appSettings)
+        {
+            _appSettings = appSettings.Value;
+        }
 
         [HttpPost]
+        [Route("Register")]
         public int RegisterAccount(Account account)
         {
+            const String DEFAULT_PERMISSIONS = "all";
             try 
             { 
                 account.salt = new Random().Next(100000000, 999999999).ToString();
@@ -63,6 +75,38 @@ namespace FVRcal.Controllers
         private bool EmailExists(String email)
         {
             return db.Accounts.Any(e => e.email == email);
+        }
+        public static string MakePasswordHash(string password, string salt)
+        {
+            return ComputeSHA256Hash(ComputeSHA256Hash(password) + ComputeSHA256Hash(salt));
+        }
+
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login(Account account)
+        {
+            var user = await db.Accounts.Where(e => e.email == account.email).SingleOrDefaultAsync();
+            if(user != null && user.password == MakePasswordHash(account.password, user.salt))
+            {
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim("UserID", user.user_id.ToString())
+                    }),
+                    Expires = DateTime.UtcNow.AddMinutes(5),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JWT_Secret)), SecurityAlgorithms.HmacSha256Signature)                    
+                };
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                var token = tokenHandler.WriteToken(securityToken);
+                return Ok(new { token });
+            }
+            else
+            {
+                return BadRequest(new { message = "Username or password is incorrect." });
+            }
         }
     }
 }

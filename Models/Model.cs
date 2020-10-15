@@ -67,4 +67,10 @@ namespace FVRcal.Models
         [StringLength(12)]
         public string type { get; set; }
     }
+
+    public class LoginModel
+    {
+        public string email { get; set; }
+        public string password { get; set; }
+    }
 }
