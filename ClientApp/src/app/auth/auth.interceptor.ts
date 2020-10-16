@@ -23,7 +23,7 @@ export class AuthInterceptor implements HttpInterceptor {
           succ => { },
           err => {
             if (err.status == 401) {
-              this.snackBar.open("You have been signed out.", "OK", { duration: 2000, });
+              this.snackBar.open("Your session has expired.", "OK", { duration: 5000, });
               localStorage.removeItem('token');
               this.router.navigateByUrl('/login');
             }

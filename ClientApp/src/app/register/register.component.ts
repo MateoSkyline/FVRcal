@@ -4,6 +4,7 @@ import { FormBuilder } from '@angular/forms';
 import { error } from 'protractor';
 import { Router } from '@angular/router'
 import { UserService } from '../shared/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-register',
@@ -13,72 +14,45 @@ import { UserService } from '../shared/user.service';
 export class RegisterComponent implements OnInit {
   public acc: Account[];
 
-  registerForm: any;
-  passwordComplex: number = 0;
   loaded: boolean = true;
-  registerStatus: number = -1;
   lastEmailUsed: string = "123xyz987abc@qwe.mnb";
-  databaseProblem: boolean = false;
 
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private formBuilder: FormBuilder, private router: Router, public service: UserService) {
-    this.registerForm = this.formBuilder.group({
-      firstname: '',
-      lastname: '',
-      email: '',
-      username: '',
-      password: '',
-      password2: ''
-    })
-  }
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private formBuilder: FormBuilder, private router: Router, public service: UserService, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
-
+    this.service.registerFormModel.reset();
   }
 
-  RegisterAccount(userData) {
+  RegisterAccount() {
     this.loaded = false;
-    this.http.post(this.baseUrl + 'api/Account/Register', userData).subscribe(result => {
-      if (!result) {
-        console.log("Register successful!");
-        this.loaded = true;
-        this.router.navigateByUrl('/login');
+    this.service.register().subscribe(
+      (res: any) => {
+        if (res.succeeded) {
+          this.service.registerFormModel.reset();
+          this.router.navigateByUrl('/login');
+          this.snackBar.open("You have just created an account! Now you can log in.", "OK", { duration: 5000, });
+          this.loaded = true;
+        } else {
+          res.errors.forEach(element => {
+            switch (element.code) {
+              case 'DuplicateEmail':
+                this.snackBar.open("This Email is already assigned to another account.", "OK", { duration: 5000, });
+                this.lastEmailUsed = this.service.registerFormModel.controls['Email'].value;
+                this.loaded = true;
+                break;
+              default:
+                this.snackBar.open("The registration has failed.", "OK", { duration: 5000, });
+                this.loaded = true;
+                break;
+            }
+          })
+        }
+      },
+      err => {
+        console.error(err);
       }
-      else if (result == 1) {
-        console.log("Register failed. Email problem.");
-        this.lastEmailUsed = userData.email;
-        this.loaded = true;
-      }
-      else if (result == 2) {
-        console.log("Register failed. Database problem.");
-        this.databaseProblem = true;
-        this.loaded = true;
-      }
-    }, error => console.error(error));
-  }
-
-  checkPasswordStrength(pass) {
-    let score = 0;
-    // award every unique letter until 5 repetitions  
-    let letters = {};
-    for (let i = 0; i < pass.length; i++) {
-      letters[pass[i]] = (letters[pass[i]] || 0) + 1;
-      score += 5.0 / letters[pass[i]];
-    }
-    // bonus points for mixing it up  
-    let variations = {
-      digits: /\d/.test(pass),
-      lower: /[a-z]/.test(pass),
-      upper: /[A-Z]/.test(pass),
-      nonWords: /\W/.test(pass),
-    };
-
-    let variationCount = 0;
-    for (let check in variations) {
-      variationCount += (variations[check]) ? 1 : 0;
-    }
-    score += (variationCount - 1) * 10;
-    this.passwordComplex = Math.trunc(score);
+    );
   }
 }
 

@@ -3,25 +3,19 @@
 </div>
 
 <div>
-  <form [formGroup]="loginForm" (ngSubmit)="Login(loginForm.value)">
+  <form [formGroup]="service.loginFormModel" (ngSubmit)="Login()">
     <mat-form-field>
       <mat-label>Your e-mail address</mat-label>
-      <input matInput #iEmail minlength="{{ iEmail.value == lastEmailUsed ? 121 : 5 }}" maxlength="120" placeholder="E-Mail" type="email" formControlName="email" [required]="true" [email]="true" />
+      <input matInput #iEmail maxlength="120" placeholder="E-Mail" type="email" formControlName="Email" />
       <mat-hint>{{ iEmail.value?.length || 0 }}/120</mat-hint>
-      <mat-error *ngIf="iEmail.value == lastEmailUsed">This e-mail is already in use.</mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Your strong password</mat-label>
-      <input matInput #iPassword minlength="{{ (passwordComplex < 70) ? 513 : 8 }}" maxlength="512" placeholder="Password" type="password" formControlName="password" [required]="true" />
+      <input matInput #iPassword maxlength="512" placeholder="Password" type="password" formControlName="Password" />
       <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
-      <mat-error>Password is too weak.</mat-error>
     </mat-form-field>
 
-    <button type="submit" mat-raised-button [disabled]="!loginForm.valid">Login</button>
+    <button type="submit" mat-raised-button [disabled]="!service.loginFormModel.valid">Login</button>
   </form>
-
-  <mat-chip-list *ngIf="databaseProblem">
-    <mat-chip color="warn">There was an undefined problem while creating your account. Please try again later, and if the problem persists, please contact customer service.</mat-chip>
-  </mat-chip-list>
 </div>

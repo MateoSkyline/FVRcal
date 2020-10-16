@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { resolveAny } from 'dns';
+import { UserService } from '../shared/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -10,36 +12,36 @@ import { resolveAny } from 'dns';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  loginForm: any;
   loaded: boolean = true;
-  databaseProblem: boolean = false;
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private formBuilder: FormBuilder, private router: Router) {
-    this.loginForm = this.formBuilder.group({
-      email: '',
-      password: ''
-    })
-  }
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private formBuilder: FormBuilder, private router: Router, public service: UserService, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
+    this.service.loginFormModel.reset();
     if (localStorage.getItem('token') != null) {
       this.router.navigateByUrl('/');
     }
   }
 
-  Login(userData) {
+  Login() {
     this.loaded = false;
-    this.http.post(this.baseUrl + 'api/Account/Login', userData).subscribe((result: any) => {
-      console.log(result);
-      localStorage.setItem('token', result.token);
-      this.router.navigateByUrl('/');
-    }, error => {
-        if (error.status == 400) {
-          console.error("Incorrect username or password");
+    this.service.login().subscribe(
+      (res: any) => {
+        localStorage.setItem('token', res.token);
+        this.router.navigateByUrl('/');
+        this.snackBar.open("You have successfully logged in.", "OK", { duration: 5000, });
+        this.loaded = true;
+      },
+      err => {
+        if (err.status == 400) {
+          this.snackBar.open("Incorrect username or password.", "OK", { duration: 5000, });
+          this.loaded = true;
+        } else {
+          console.error(err);
+          this.loaded = true;
         }
-        else
-          console.error(error);
-    });
+      }
+    )
   }
 
 }
