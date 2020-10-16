@@ -3,11 +3,12 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { tap } from "rxjs/operators";
 import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private snackBar: MatSnackBar) {
 
   }
 
@@ -16,13 +17,15 @@ export class AuthInterceptor implements HttpInterceptor {
       const clonedReq = req.clone({
         headers: req.headers.set('Authorization', 'Bearer ' + localStorage.getItem('token'))
       });
+      console.log(clonedReq);
       return next.handle(clonedReq).pipe(
         tap(
           succ => { },
           err => {
             if (err.status == 401) {
+              this.snackBar.open("You have been signed out.", "OK", { duration: 2000, });
               localStorage.removeItem('token');
-              this.router.navigateByUrl('/user/login');
+              this.router.navigateByUrl('/login');
             }
           }
         )

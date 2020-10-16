@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { MatButtonModule, MatMenuModule, MatToolbarModule, MatIconModule, MatCardModule, MatInputModule, MatProgressSpinnerModule, MatChipsModule } from '@angular/material';
+import { MatButtonModule, MatMenuModule, MatToolbarModule, MatIconModule, MatCardModule, MatInputModule, MatProgressSpinnerModule, MatChipsModule, MatSnackBarModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -40,6 +40,7 @@ import { UserService } from './shared/user.service';
     MatInputModule,
     MatProgressSpinnerModule,
     MatChipsModule,
+    MatSnackBarModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent, canActivate:[AuthGuard] },

@@ -22,7 +22,7 @@ export class UserService {
     return this.http.get(this.BaseURI + 'api/UserProfile');
   }
 
-  isLoggedIn() {
-
+  logout() {
+    return localStorage.removeItem('token');
   }
 }

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from '../shared/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-nav-menu',
@@ -7,7 +9,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./nav-menu.component.css']
 })
 export class NavMenuComponent {
-  constructor(private router: Router) { }
+  constructor(private router: Router, private service: UserService, private snackBar: MatSnackBar) { }
   isExpanded = false;
 
   collapse() {
@@ -19,7 +21,7 @@ export class NavMenuComponent {
   }
 
   onLogout() {
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+    this.service.logout();
+    this.snackBar.open("You just signed out.", "Thanks!", {duration: 2000,});
   }
 }

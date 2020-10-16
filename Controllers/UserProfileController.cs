@@ -21,6 +21,7 @@ namespace FVRcal.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<Object> GetUserProfile()
         {
             string userID = User.Claims.First(c => c.Type == "UserID").Value;
