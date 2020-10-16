@@ -2,20 +2,32 @@
   <mat-spinner></mat-spinner>
 </div>
 
-<div>
-  <form [formGroup]="service.loginFormModel" (ngSubmit)="Login()">
-    <mat-form-field>
-      <mat-label>Your e-mail address</mat-label>
-      <input matInput #iEmail maxlength="120" placeholder="E-Mail" type="email" formControlName="Email" />
-      <mat-hint>{{ iEmail.value?.length || 0 }}/120</mat-hint>
-    </mat-form-field>
+<div class="col-md-6 offset-md-3 mt-5">
+  <div class="card">
+    <h4 class="card-header">Login</h4>
+    <div class="card-body">
+      <form [formGroup]="service.loginFormModel" (ngSubmit)="Login()" (keydown.enter)="Login()">
+        <div class="form-group">
+          <mat-form-field>
+            <mat-label>Your e-mail address</mat-label>
+            <input matInput #iEmail maxlength="120" placeholder="E-Mail" type="email" formControlName="Email" />
+            <mat-hint>{{ iEmail.value?.length || 0 }}/120</mat-hint>
+          </mat-form-field>
+        </div>
 
-    <mat-form-field>
-      <mat-label>Your strong password</mat-label>
-      <input matInput #iPassword maxlength="512" placeholder="Password" type="password" formControlName="Password" />
-      <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
-    </mat-form-field>
+        <div class="form-group">
+          <mat-form-field>
+            <mat-label>Your strong password</mat-label>
+            <input matInput #iPassword maxlength="512" placeholder="Password" type="password" formControlName="Password" />
+            <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
+          </mat-form-field>
+        </div>
 
-    <button type="submit" mat-raised-button [disabled]="!service.loginFormModel.valid">Login</button>
-  </form>
+        <div class="form-group">
+          <button type="submit" mat-button [routerLink]="['/register']">Register</button>
+          <button type="submit" mat-raised-button color="primary" [disabled]="!service.loginFormModel.valid">Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
