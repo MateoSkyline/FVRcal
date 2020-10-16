@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { error } from 'protractor';
 import { Router } from '@angular/router'
+import { UserService } from '../shared/user.service';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ import { Router } from '@angular/router'
 export class RegisterComponent implements OnInit {
   public acc: Account[];
 
-  registerForm;
+  registerForm: any;
   passwordComplex: number = 0;
   loaded: boolean = true;
   registerStatus: number = -1;
@@ -20,7 +21,7 @@ export class RegisterComponent implements OnInit {
   databaseProblem: boolean = false;
 
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private formBuilder: FormBuilder, private router: Router) {
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private formBuilder: FormBuilder, private router: Router, public service: UserService) {
     this.registerForm = this.formBuilder.group({
       firstname: '',
       lastname: '',
@@ -37,11 +38,11 @@ export class RegisterComponent implements OnInit {
 
   RegisterAccount(userData) {
     this.loaded = false;
-    this.http.post(this.baseUrl + 'RegisterAccount', userData).subscribe(result => {
+    this.http.post(this.baseUrl + 'api/Account/Register', userData).subscribe(result => {
       if (!result) {
         console.log("Register successful!");
         this.loaded = true;
-        this.router.navigate(['/counter']);
+        this.router.navigateByUrl('/login');
       }
       else if (result == 1) {
         console.log("Register failed. Email problem.");
@@ -82,13 +83,11 @@ export class RegisterComponent implements OnInit {
 }
 
 interface Account {
-  user_id: number;
-  firstname: string;
-  lastname: string;
-  email: string;
-  username: string;
-  usercode: string;
-  password: string;
-  salt: string;
-  permissions: string;
+  FirstName: string;
+  LastName: string;
+  Email: string;
+  UserName: string;
+  UserCode: string;
+  PasswordHash: string;
+  SecuritySalt: string;
 }

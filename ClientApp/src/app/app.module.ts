@@ -12,6 +12,10 @@ import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RegisterComponent } from './register/register.component';
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './auth/auth.guard';
+import { AuthInterceptor } from './auth/auth.interceptor';
+import { UserService } from './shared/user.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +24,8 @@ import { RegisterComponent } from './register/register.component';
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    RegisterComponent
+    RegisterComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -37,13 +42,18 @@ import { RegisterComponent } from './register/register.component';
     MatChipsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
+      { path: 'counter', component: CounterComponent, canActivate:[AuthGuard] },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'register', component: RegisterComponent },
+      { path: 'login', component: LoginComponent },
     ]),
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [UserService, {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
