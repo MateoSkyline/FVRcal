@@ -2,52 +2,70 @@
   <mat-spinner></mat-spinner>
 </div>
 
-<div>
-  <form [formGroup]="service.registerFormModel" autocomplete="off" (ngSubmit)="RegisterAccount()">
-    <mat-form-field>
-      <mat-label>Your first name</mat-label>
-      <input matInput #iFirstname minlength="3" maxlength="60" placeholder="First name" formControlName="FirstName" />
-      <mat-hint>{{ iFirstname.value?.length || 0 }}/60</mat-hint>
-    </mat-form-field>
+<div class="col-md-8 offset-md-2 mt-5">
+  <div class="card">
+    <h4 class="card-header">Register</h4>
+    <div class="card-body">
+      <form [formGroup]="service.registerFormModel" autocomplete="off" (ngSubmit)="RegisterAccount()" (keydown.enter)="RegisterAccount()">
+        <div class="form-group">
+          <mat-form-field class="col-md-6">
+            <mat-label>Your first name</mat-label>
+            <input matInput #iFirstname minlength="3" maxlength="60" placeholder="First name" formControlName="FirstName" />
+            <mat-hint>{{ iFirstname.value?.length || 0 }}/60</mat-hint>
+            <mat-error *ngIf="service.registerFormModel.controls['FirstName'].hasError('required')">First name is required!</mat-error>
+          </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Your last name</mat-label>
-      <input matInput #iLastname minlength="2" maxlength="60" placeholder="Last name" formControlName="LastName" />
-      <mat-hint>{{ iLastname.value?.length || 0 }}/60</mat-hint>
-    </mat-form-field>
+          <mat-form-field class="col-md-6">
+            <mat-label>Your last name</mat-label>
+            <input matInput #iLastname minlength="2" maxlength="60" placeholder="Last name" formControlName="LastName" />
+            <mat-hint>{{ iLastname.value?.length || 0 }}/60</mat-hint>
+            <mat-error *ngIf="service.registerFormModel.controls['LastName'].hasError('required')">Last name is required!</mat-error>
+          </mat-form-field>
+        </div>
 
-    <mat-form-field>
-      <mat-label>Your e-mail address</mat-label>
-      <input matInput #iEmail minlength="{{ iEmail.value == lastEmailUsed ? 121 : 5 }}" maxlength="120" placeholder="E-Mail" type="email" formControlName="Email" />
-      <mat-hint>{{ iEmail.value?.length || 0 }}/120</mat-hint>
-      <mat-error *ngIf="iEmail.value == lastEmailUsed">This e-mail is already in use.</mat-error>
-      <mat-error *ngIf="service.registerFormModel.get('Email').touched && service.registerFormModel.get('Email').errors?.email">Invalid Email address.</mat-error>
-    </mat-form-field>
+        <div class="form-group">
+          <mat-form-field class="col-md-6">
+            <mat-label>Your e-mail address</mat-label>
+            <input matInput #iEmail minlength="{{ iEmail.value == lastEmailUsed ? 121 : 5 }}" maxlength="120" placeholder="E-Mail" type="email" formControlName="Email" />
+            <mat-hint>{{ iEmail.value?.length || 0 }}/120</mat-hint>
+            <mat-error *ngIf="service.registerFormModel.controls['Email'].hasError('required')">Email is required!</mat-error>
+            <mat-error *ngIf="iEmail.value == lastEmailUsed">This e-mail is already in use.</mat-error>
+            <mat-error *ngIf="service.registerFormModel.get('Email').touched && service.registerFormModel.get('Email').errors?.email">Invalid Email address.</mat-error>
+          </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Your login</mat-label>
-      <input matInput #iUsername minlength="3" maxlength="30" placeholder="Username" formControlName="UserName" />
-      <mat-hint>{{ iUsername.value?.length || 0 }}/30</mat-hint>
-    </mat-form-field>
+          <mat-form-field class="col-md-6">
+            <mat-label>Your login</mat-label>
+            <input matInput #iUsername minlength="3" maxlength="30" placeholder="Username" formControlName="UserName" />
+            <mat-hint>{{ iUsername.value?.length || 0 }}/30</mat-hint>
+            <mat-error *ngIf="service.registerFormModel.controls['UserName'].hasError('required')">Username is required!</mat-error>
+          </mat-form-field>
+        </div>
 
-    <mat-form-field>
-      <mat-label>Your strong password</mat-label>
-      <input matInput #iPassword minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="Password" />
-      <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
-      <mat-error *ngIf="service.registerFormModel.controls['Password'].hasError('required')">Password is required!</mat-error>
-      <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('minlength')">Password is too short!</mat-error>
-      <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('hasNumber')">Password must contain at least 1 number!</mat-error>
-      <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('hasCapitalCase')">Password must contain at least 1 Capital Case!</mat-error>
-      <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('hasSmallCase')">Password must contain at least 1 Small Case!</mat-error>
-    </mat-form-field>
+        <div class="form-group">
+          <mat-form-field class="col-md-6">
+            <mat-label>Your strong password</mat-label>
+            <input matInput #iPassword minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="Password" />
+            <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
+            <mat-error *ngIf="service.registerFormModel.controls['Password'].hasError('required')">Password is required!</mat-error>
+            <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('minlength')">Password is too short!</mat-error>
+            <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('hasNumber')">Password must contain at least 1 number!</mat-error>
+            <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('hasCapitalCase')">Password must contain at least 1 Capital Case!</mat-error>
+            <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('hasSmallCase')">Password must contain at least 1 Small Case!</mat-error>
+          </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Your strong password once again</mat-label>
-      <input matInput #iPassword2 minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="ConfirmPassword" pattern="{{ iPassword.value }}" />
-      <mat-hint>8/{{ iPassword2.value?.length || 0 }}</mat-hint>
-      <mat-error>Passwords do not match!</mat-error>
-    </mat-form-field>
+          <mat-form-field class="col-md-6">
+            <mat-label>Your strong password once again</mat-label>
+            <input matInput #iPassword2 minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="ConfirmPassword" pattern="{{ iPassword.value }}" />
+            <mat-hint>8/{{ iPassword2.value?.length || 0 }}</mat-hint>
+            <mat-error>Passwords do not match!</mat-error>
+          </mat-form-field>
+        </div>
 
-    <button type="submit" mat-raised-button [disabled]="!service.registerFormModel.valid">Register</button>
-  </form>
+        <div class="form-group">
+          <button type="submit" mat-button [routerLink]="['/login']">Login</button>
+          <button type="submit" mat-raised-button color="primary" [disabled]="!service.registerFormModel.valid">Register</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
