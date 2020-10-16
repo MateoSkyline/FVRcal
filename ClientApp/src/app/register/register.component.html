@@ -26,7 +26,7 @@
         <div class="form-group">
           <mat-form-field class="col-md-6">
             <mat-label>Your e-mail address</mat-label>
-            <input matInput #iEmail minlength="{{ iEmail.value == lastEmailUsed ? 121 : 5 }}" maxlength="120" placeholder="E-Mail" type="email" formControlName="Email" />
+            <input matInput #iEmail minlength="{{ iEmail.value == lastEmailUsed ? 121 : 3 }}" maxlength="120" placeholder="E-Mail" type="email" formControlName="Email" />
             <mat-hint>{{ iEmail.value?.length || 0 }}/120</mat-hint>
             <mat-error *ngIf="service.registerFormModel.controls['Email'].hasError('required')">Email is required!</mat-error>
             <mat-error *ngIf="iEmail.value == lastEmailUsed">This e-mail is already in use.</mat-error>
@@ -35,9 +35,10 @@
 
           <mat-form-field class="col-md-6">
             <mat-label>Your login</mat-label>
-            <input matInput #iUsername minlength="3" maxlength="30" placeholder="Username" formControlName="UserName" />
+            <input matInput #iUsername minlength="{{ iUsername.value == lastLoginUsed ? 31 : 3 }}" maxlength="30" placeholder="Username" formControlName="UserName" />
             <mat-hint>{{ iUsername.value?.length || 0 }}/30</mat-hint>
             <mat-error *ngIf="service.registerFormModel.controls['UserName'].hasError('required')">Username is required!</mat-error>
+            <mat-error *ngIf="iUsername.value == lastLoginUsed">This username is already in use.</mat-error>
           </mat-form-field>
         </div>
 

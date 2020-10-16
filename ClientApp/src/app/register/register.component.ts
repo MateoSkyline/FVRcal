@@ -16,6 +16,7 @@ export class RegisterComponent implements OnInit {
 
   loaded: boolean = true;
   lastEmailUsed: string = "123xyz987abc@qwe.mnb";
+  lastLoginUsed: string = "";
 
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private formBuilder: FormBuilder, private router: Router, public service: UserService, private snackBar: MatSnackBar) { }
@@ -41,8 +42,14 @@ export class RegisterComponent implements OnInit {
                 this.lastEmailUsed = this.service.registerFormModel.controls['Email'].value;
                 this.loaded = true;
                 break;
+              case 'DuplicateUserName':
+                this.snackBar.open("This Username is already taken.", "OK", { duration: 5000, });
+                this.lastLoginUsed = this.service.registerFormModel.controls['UserName'].value;
+                this.loaded = true;
+                break;
               default:
                 this.snackBar.open("The registration has failed.", "OK", { duration: 5000, });
+                console.error("Error : " + element.code);
                 this.loaded = true;
                 break;
             }
