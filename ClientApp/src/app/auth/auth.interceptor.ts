@@ -25,7 +25,7 @@ export class AuthInterceptor implements HttpInterceptor {
             if (err.status == 401) {
               this.snackBar.open("Your session has expired.", "OK", { duration: 5000, });
               localStorage.removeItem('token');
-              this.router.navigateByUrl('/login');
+              this.router.navigateByUrl('/auth/login');
             }
           }
         )

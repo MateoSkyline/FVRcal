@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { error } from 'protractor';
 import { Router } from '@angular/router'
-import { UserService } from '../shared/user.service';
+import { UserService } from '../../shared/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({

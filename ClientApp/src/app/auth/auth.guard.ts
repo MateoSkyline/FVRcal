@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { Observable } from 'rxjs';
 export class AuthGuard implements CanActivate {
 
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private snackBar: MatSnackBar) {
   }
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -16,7 +17,8 @@ export class AuthGuard implements CanActivate {
     if (localStorage.getItem('token') != null)
       return true;
     else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/auth/login']);
+      this.snackBar.open("Log in to access this resource!", "OK", { duration: 5000, });
       return false;
     }
 
