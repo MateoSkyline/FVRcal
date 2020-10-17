@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FVRcal.Models;
-using Org.BouncyCastle.Crypto;
-using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -13,7 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
 
 namespace FVRcal.Controllers
 {
@@ -21,7 +18,6 @@ namespace FVRcal.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private DatabaseContext db = new DatabaseContext();
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationSettings _appSettings;
@@ -37,21 +33,20 @@ namespace FVRcal.Controllers
         [HttpPost]
         [Route("Register")]
         //POST : /api/Account/Register
-        public async Task<Object> PostApplicationUser(Account model)
+        public async Task<Object> PostApplicationUser(Account account)
         {
             var applicationUser = new ApplicationUser()
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                UserName = model.UserName,
-                UserCode = model.UserCode,
-                SecuritySalt = model.SecuritySalt
+                FirstName = account.FirstName,
+                LastName = account.LastName,
+                Email = account.Email,
+                UserName = account.UserName,
+                UserCode = account.UserCode
             };
 
             try
             {
-                var result = await _userManager.CreateAsync(applicationUser, model.Password);
+                var result = await _userManager.CreateAsync(applicationUser, account.Password);
                 return Ok(result);
             }
             catch(Exception ex)
@@ -63,6 +58,7 @@ namespace FVRcal.Controllers
 
         [HttpPost]
         [Route("Login")]
+        //POST : /api/Account/Login
         public async Task<IActionResult> Login(Account account)
         {
             var user = await _userManager.FindByEmailAsync(account.Email);

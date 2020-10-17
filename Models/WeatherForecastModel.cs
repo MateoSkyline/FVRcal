@@ -2,7 +2,7 @@ using System;
 
 namespace FVRcal
 {
-    public class WeatherForecast
+    public class WeatherForecastModel
     {
         public DateTime Date { get; set; }
 

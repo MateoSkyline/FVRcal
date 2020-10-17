@@ -30,7 +30,6 @@ namespace FVRcal.Models
         public string UserName { get; set; }
         public string UserCode { get; set; }
         public string Password { get; set; }
-        public string SecuritySalt { get; set; }
     }
 
     public class Storage
