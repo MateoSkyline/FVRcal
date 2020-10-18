@@ -16,7 +16,8 @@ export class UserService {
     FirstName: ['', Validators.required],
     LastName: ['', Validators.required],
     Email: ['', [
-      Validators.email, Validators.required
+      Validators.email,
+      Validators.required
     ]],
     UserName: ['', Validators.required],
     Password: ['', Validators.compose([
@@ -30,21 +31,44 @@ export class UserService {
 
   loginFormModel = this.formBuilder.group({
     Email: ['', [
-      Validators.required,
-      Validators.email
+      Validators.email,
+      Validators.required      
     ]],
     Password: ['', Validators.required]
   })
 
-  comparePasswords(formBuilder: FormGroup) {
-    let confirmPassword = formBuilder.get('ConfirmPassword');
-    if (confirmPassword.errors == null || 'passwordMismatch' in confirmPassword.errors) {
-      if (formBuilder.get('Password').value != confirmPassword.value)
-        confirmPassword.setErrors({ passwordMismatch: true });
-      else
-        confirmPassword.setErrors(null);
-    }
-  }
+  editUserFormModel = this.formBuilder.group({
+    FirstName: ['', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(60)
+    ]],
+    LastName: ['', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(60)
+    ]],
+    UserName: ['', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(30)
+    ]],
+    Password: ['', Validators.compose([
+      UserService.patternValidator(new RegExp('[0-9]'), { hasNumber: true }),
+      UserService.patternValidator(new RegExp('[A-Z]'), { hasCapitalCase: true }),
+      UserService.patternValidator(new RegExp('[a-z]'), { hasSmallCase: true })
+    ])],
+    ConfirmPassword: [''],
+    OldPassword: [''],
+    Email: ['', [
+      Validators.email,
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(120)
+    ]],
+    PhoneNumber: [''],
+    TwoFactor: ['']
+  })
 
   static patternValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } => {
@@ -83,5 +107,23 @@ export class UserService {
 
   getUserProfile() {
     return this.http.get(this.baseUrl + 'api/UserProfile');
+  }
+
+  getUserEdit() {
+    return this.http.get(this.baseUrl + 'api/Account/UserEdit');
+  }
+
+  updateUserEdit() {
+    var body = {
+      FirstName: (this.editUserFormModel.controls['FirstName'].touched ? this.editUserFormModel.value.FirstName : null),
+      LastName: (this.editUserFormModel.controls['LastName'].touched ? this.editUserFormModel.value.LastName : null),
+      UserName: (this.editUserFormModel.controls['UserName'].touched ? this.editUserFormModel.value.UserName : null),
+      PhoneNumber: (this.editUserFormModel.controls['PhoneNumber'].touched ? this.editUserFormModel.value.PhoneNumber : null),
+      Email: (this.editUserFormModel.controls['Email'].touched ? this.editUserFormModel.value.Email : null),              
+      TwoFactorEnabled: this.editUserFormModel.value.TwoFactor,
+      PasswordHash: (this.editUserFormModel.controls['Password'].touched ? this.editUserFormModel.value.Password : null),
+      OldPassword: (this.editUserFormModel.controls['OldPassword'].touched ? this.editUserFormModel.value.OldPassword : null),
+    }
+    return this.http.post(this.baseUrl + 'api/Account/UserEdit', body);
   }
 }

@@ -15,6 +15,8 @@ import {
   MatSnackBarModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AuthInterceptor } from './auth/auth.interceptor';
@@ -28,6 +30,7 @@ import { CounterComponent } from './pages/counter/counter.component';
 import { FetchDataComponent } from './pages/fetch-data/fetch-data.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
+import { UserEditComponent } from './auth/user-edit/user-edit.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +41,8 @@ import { LoginComponent } from './auth/login/login.component';
     CounterComponent,
     FetchDataComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    UserEditComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -55,6 +59,8 @@ import { LoginComponent } from './auth/login/login.component';
     MatProgressSpinnerModule,
     MatChipsModule,
     MatSnackBarModule,
+    MatExpansionModule,
+    MatCheckboxModule,
     BrowserAnimationsModule
   ],
   providers: [UserService, {

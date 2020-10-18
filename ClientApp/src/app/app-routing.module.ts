@@ -6,6 +6,7 @@ import { AuthComponent } from './auth/auth.component';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
+import { UserEditComponent } from './auth/user-edit/user-edit.component';
 
 import { CounterComponent } from './pages/counter/counter.component';
 import { FetchDataComponent } from './pages/fetch-data/fetch-data.component';
@@ -17,7 +18,8 @@ const routes: Routes = [
   { path: 'auth', component: AuthComponent,
     children: [
       { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent }
+      { path: 'register', component: RegisterComponent },
+      { path: 'user-edit', component: UserEditComponent, canActivate: [AuthGuard] }
     ]
   }
 ];

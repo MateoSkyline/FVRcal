@@ -25,7 +25,7 @@ namespace FVRcal.Controllers
         public async Task<Object> GetUserProfile()
         {
             string userID = User.Claims.First(c => c.Type == "UserID").Value;
-            var user = await _userManager.FindByIdAsync(userID);
+            ApplicationUser user = await _userManager.FindByIdAsync(userID);
             return new
             {
                 user.FirstName,

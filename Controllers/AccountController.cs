@@ -11,6 +11,10 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using System.Reflection.Metadata.Ecma335;
+using System.Drawing.Printing;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FVRcal.Controllers
 {
@@ -29,6 +33,12 @@ namespace FVRcal.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
         }
+
+        /*
+         
+         Creating user accounts section
+         
+        */
 
         [HttpPost]
         [Route("Register")]
@@ -55,6 +65,11 @@ namespace FVRcal.Controllers
             }
         }
 
+        /*
+         
+         Login section
+         
+        */
 
         [HttpPost]
         [Route("Login")]
@@ -82,6 +97,75 @@ namespace FVRcal.Controllers
             {
                 return BadRequest(new { message = "Username or password is incorrect." });
             }
+        }
+
+        /*
+         
+         User editing section
+         
+        */
+
+        [HttpGet]
+        [Authorize]
+        [Route("UserEdit")]
+        //GET: /api/Account/UserEdit
+        public async Task<Object> UserEdit()
+        {
+            string userID = User.Claims.First(c => c.Type == "UserID").Value;
+            ApplicationUser actualUser = await _userManager.FindByIdAsync(userID);
+            return new
+            {
+                actualUser.FirstName,
+                actualUser.LastName,
+                actualUser.UserName,
+                actualUser.PhoneNumber,
+                actualUser.PhoneNumberConfirmed,
+                actualUser.Email,
+                actualUser.EmailConfirmed,
+                actualUser.TwoFactorEnabled                
+            };
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("UserEdit")]
+        //POST: /api/Account/UserEdit
+        public async Task<IActionResult> UserEdit(ApplicationUser account)
+        {
+            string userID = User.Claims.First(c => c.Type == "UserID").Value;
+            ApplicationUser actualUser = await _userManager.FindByIdAsync(userID);
+            Boolean problems = false;
+            
+            if(account.FirstName != null)
+            {
+                actualUser.FirstName = account.FirstName;
+                try { await _userManager.UpdateAsync(actualUser); } catch(Exception) { problems = true; }
+            }
+            if (account.LastName != null)
+            {
+                actualUser.LastName = account.LastName;
+                try { await _userManager.UpdateAsync(actualUser); } catch (Exception) { problems = true; }
+            }
+            if (account.PhoneNumber != null)
+            {
+                actualUser.PhoneNumber = account.PhoneNumber;
+                try { await _userManager.UpdateAsync(actualUser); } catch (Exception) { problems = true; }
+            }
+            if (account.TwoFactorEnabled != actualUser.TwoFactorEnabled)
+            {
+                actualUser.TwoFactorEnabled = account.TwoFactorEnabled;
+                try { await _userManager.UpdateAsync(actualUser); } catch (Exception) { problems = true; }
+            }
+            if(account.PasswordHash != null)
+            {
+                var changePassword = await _userManager.ChangePasswordAsync(actualUser, account.OldPassword, account.PasswordHash);
+                if(!changePassword.Succeeded) problems = true;
+            }
+
+            if (!problems)
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

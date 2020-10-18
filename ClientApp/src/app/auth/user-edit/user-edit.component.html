@@ -1,0 +1,119 @@
+<div class="spinner" *ngIf="!loaded">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div class="col-md-6 offset-md-3 mt-5">
+  <form [formGroup]="service.editUserFormModel" autocomplete="off" (ngSubmit)="updateUserData()" (keydown.enter)="updateUserData()">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Basic personal information</mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
+        <div>
+          <div class="form-group">
+            <mat-form-field class="col-md-12">
+              <mat-label>First name</mat-label>
+              <input matInput #iFirstname placeholder="First name" formControlName="FirstName" />
+              <mat-hint>{{ iFirstname.value?.length || 0 }}/60</mat-hint>
+              <mat-error *ngIf="service.editUserFormModel.controls['FirstName'].hasError('required')">First name is required!</mat-error>
+              <mat-error *ngIf="service.editUserFormModel.controls['FirstName'].hasError('minlength')">First name is too short!</mat-error>
+              <mat-error *ngIf="service.editUserFormModel.controls['FirstName'].hasError('maxlength')">First name is too long!</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-group">
+            <mat-form-field class="col-md-12">
+              <mat-label>Last name</mat-label>
+              <input matInput #iLastname placeholder="Last name" formControlName="LastName" />
+              <mat-hint>{{ iLastname.value?.length || 0 }}/60</mat-hint>
+              <mat-error *ngIf="service.editUserFormModel.controls['LastName'].hasError('required')">Last name is required!</mat-error>
+              <mat-error *ngIf="service.editUserFormModel.controls['LastName'].hasError('minlength')">Last name is too short!</mat-error>
+              <mat-error *ngIf="service.editUserFormModel.controls['LastName'].hasError('maxlength')">Last name is too long!</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-group">
+            <mat-form-field class="col-md-12">
+              <mat-label>Phone number</mat-label>
+              <input matInput #iPhone placeholder="Phone number" formControlName="PhoneNumber" />
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Update email address</mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
+        <div>
+          <div class="form-group">
+            <mat-form-field class="col-md-12">
+              <mat-label>Email address</mat-label>
+              <input matInput #iEmail minlength="{{ iEmail.value == lastEmailUsed ? 121 : 3 }}" placeholder="E-Mail" type="email" formControlName="Email" />
+              <mat-hint>{{ iEmail.value?.length || 0 }}/120</mat-hint>
+              <mat-error *ngIf="service.editUserFormModel.controls['Email'].hasError('required')">Email is required!</mat-error>
+              <mat-error *ngIf="service.editUserFormModel.get('Email').errors?.email">Invalid Email address.</mat-error>
+              <mat-error *ngIf="iEmail.value == lastEmailUsed">This e-mail is already in use.</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Enable two-factor authentication</mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
+        <div>
+          <div class="form-group col-md-12">
+            <mat-checkbox matInput #iTwoFactor formControlName="TwoFactor">Use two-factor authentication</mat-checkbox>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Change password</mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
+        <div>
+          <div class="form-group">
+            <mat-form-field class="col-md-12">
+              <mat-label>Actual password</mat-label>
+              <input matInput #iOldPassword placeholder="Password" type="password" formControlName="OldPassword" [required]="iPassword.value.length > 0" />
+              <mat-hint>8/{{ iOldPassword.value?.length || 0 }}</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <div class="form-group">
+            <mat-form-field class="col-md-6">
+              <mat-label>New password</mat-label>
+              <input matInput #iPassword minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="Password" />
+              <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
+              <mat-error *ngIf="service.editUserFormModel.controls['Password'].hasError('required')">Password is required!</mat-error>
+              <mat-error *ngIf="!service.editUserFormModel.controls['Password'].hasError('required') && service.editUserFormModel.controls['Password'].hasError('minlength')">Password is too short!</mat-error>
+              <mat-error *ngIf="!service.editUserFormModel.controls['Password'].hasError('required') && service.editUserFormModel.controls['Password'].hasError('hasNumber')">Password must contain at least 1 number!</mat-error>
+              <mat-error *ngIf="!service.editUserFormModel.controls['Password'].hasError('required') && service.editUserFormModel.controls['Password'].hasError('hasCapitalCase')">Password must contain at least 1 Capital Case!</mat-error>
+              <mat-error *ngIf="!service.editUserFormModel.controls['Password'].hasError('required') && service.editUserFormModel.controls['Password'].hasError('hasSmallCase')">Password must contain at least 1 Small Case!</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-6">
+              <mat-label>Confirm password</mat-label>
+              <input matInput #iPasswordConfirm placeholder="Password" type="password" formControlName="ConfirmPassword" pattern="{{ iPassword.value }}" [required]="iPassword.value.length > 0" />
+              <mat-hint>8/{{ iPasswordConfirm.value?.length || 0 }}</mat-hint>
+              <mat-error>Passwords do not match!</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+</mat-expansion-panel>
+
+      <div>
+        <div class="form-group submit-button">
+          <button type="submit" mat-raised-button color="primary" [disabled]="!service.editUserFormModel.valid">Update data</button>
+        </div>
+      </div>
+    </mat-accordion>
+  </form>
+</div>

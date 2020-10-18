@@ -19,7 +19,7 @@ export class RegisterComponent implements OnInit {
   lastLoginUsed: string = "";
 
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private formBuilder: FormBuilder, private router: Router, public service: UserService, private snackBar: MatSnackBar) { }
+  constructor(private formBuilder: FormBuilder, private router: Router, public service: UserService, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.service.registerFormModel.reset();

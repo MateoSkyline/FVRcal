@@ -15,7 +15,7 @@ namespace FVRcal.Models
         public string FirstName { get; set; }
         [Column(TypeName = "nvarchar(60)")]
         public string LastName { get; set; }
-        [Column(TypeName = "nvarchar(9)")]
-        public string SecuritySalt { get; set; }
+        [NotMapped]
+        public string OldPassword { get; set; }
     }
 }
