@@ -31,7 +31,7 @@ export class RegisterComponent implements OnInit {
       (res: any) => {
         if (res.succeeded) {
           this.service.registerFormModel.reset();
-          this.router.navigateByUrl('/login');
+          this.router.navigateByUrl('/auth/login');
           this.snackBar.open("You have just created an account! Now you can log in.", "OK", { duration: 5000, });
           this.loaded = true;
         } else {
