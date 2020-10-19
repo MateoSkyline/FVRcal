@@ -42,28 +42,31 @@
           </mat-form-field>
         </div>
 
-        <div class="form-group">
-          <mat-form-field class="col-md-6">
-            <mat-label>Your strong password</mat-label>
-            <input matInput #iPassword minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="Password" />
-            <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
-            <mat-error *ngIf="service.registerFormModel.controls['Password'].hasError('required')">Password is required!</mat-error>
-            <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('minlength')">Password is too short!</mat-error>
-            <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('hasNumber')">Password must contain at least 1 number!</mat-error>
-            <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('hasCapitalCase')">Password must contain at least 1 Capital Case!</mat-error>
-            <mat-error *ngIf="!service.registerFormModel.controls['Password'].hasError('required') && service.registerFormModel.controls['Password'].hasError('hasSmallCase')">Password must contain at least 1 Small Case!</mat-error>
-          </mat-form-field>
+        <div formGroupName="Passwords">
+          <div class="form-group">
+            <mat-form-field class="col-md-6">
+              <mat-label>Your strong password</mat-label>
+              <input matInput #iPassword minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="Password" />
+              <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
+              <mat-error *ngIf="service.registerFormModel.get('Passwords.Password').hasError('required')">Password is required!</mat-error>
+              <mat-error *ngIf="!service.registerFormModel.get('Passwords.Password').hasError('required') && service.registerFormModel.get('Passwords.Password').hasError('minlength')">Password is too short!</mat-error>
+              <mat-error *ngIf="!service.registerFormModel.get('Passwords.Password').hasError('required') && service.registerFormModel.get('Passwords.Password').hasError('hasNumber')">Password must contain at least 1 number!</mat-error>
+              <mat-error *ngIf="!service.registerFormModel.get('Passwords.Password').hasError('required') && service.registerFormModel.get('Passwords.Password').hasError('hasCapitalCase')">Password must contain at least 1 Capital Case!</mat-error>
+              <mat-error *ngIf="!service.registerFormModel.get('Passwords.Password').hasError('required') && service.registerFormModel.get('Passwords.Password').hasError('hasSmallCase')">Password must contain at least 1 Small Case!</mat-error>
+            </mat-form-field>
 
-          <mat-form-field class="col-md-6">
-            <mat-label>Your strong password once again</mat-label>
-            <input matInput #iPassword2 minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="ConfirmPassword" pattern="{{ iPassword.value }}" />
-            <mat-hint>8/{{ iPassword2.value?.length || 0 }}</mat-hint>
-            <mat-error>Passwords do not match!</mat-error>
-          </mat-form-field>
+            <mat-form-field class="col-md-6">
+              <mat-label>Your strong password once again</mat-label>
+              <input matInput #iPassword2 minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="ConfirmPassword" />
+              <mat-hint>8/{{ iPassword2.value?.length || 0 }}</mat-hint>
+              <mat-error *ngIf="service.registerFormModel.get('Passwords.ConfirmPassword').hasError('required')">This is required too!</mat-error>
+              <mat-error *ngIf="service.registerFormModel.get('Passwords.ConfirmPassword').hasError('passwordMismatch')">Passwords do not match!</mat-error>
+            </mat-form-field>
+          </div>
         </div>
 
         <div class="form-group">
-          <button type="submit" mat-button [routerLink]="['/auth/login']">Login</button>
+          <button type="button" mat-button [routerLink]="['/auth/login']">Login</button>
           <button type="submit" mat-raised-button color="primary" [disabled]="!service.registerFormModel.valid">Register</button>
         </div>
       </form>

@@ -15,8 +15,8 @@ export class RegisterComponent implements OnInit {
   public acc: Account[];
 
   loaded: boolean = true;
-  lastEmailUsed: string = "123xyz987abc@qwe.mnb";
-  lastLoginUsed: string = "";
+  lastEmailUsed: string = "fvrcal.noreply@gmail.com";
+  lastLoginUsed: string = "FVRcal";
 
 
   constructor(private formBuilder: FormBuilder, private router: Router, public service: UserService, private snackBar: MatSnackBar) { }
@@ -57,7 +57,9 @@ export class RegisterComponent implements OnInit {
         }
       },
       err => {
+        this.snackBar.open("The registration has failed.", "OK", { duration: 5000, });
         console.error(err);
+        this.loaded = true;
       }
     );
   }

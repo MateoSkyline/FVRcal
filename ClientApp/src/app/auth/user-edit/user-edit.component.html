@@ -87,24 +87,27 @@
             </mat-form-field>
           </div>
 
-          <div class="form-group">
-            <mat-form-field class="col-md-6">
-              <mat-label>New password</mat-label>
-              <input matInput #iPassword minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="Password" />
-              <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
-              <mat-error *ngIf="service.editUserFormModel.controls['Password'].hasError('required')">Password is required!</mat-error>
-              <mat-error *ngIf="!service.editUserFormModel.controls['Password'].hasError('required') && service.editUserFormModel.controls['Password'].hasError('minlength')">Password is too short!</mat-error>
-              <mat-error *ngIf="!service.editUserFormModel.controls['Password'].hasError('required') && service.editUserFormModel.controls['Password'].hasError('hasNumber')">Password must contain at least 1 number!</mat-error>
-              <mat-error *ngIf="!service.editUserFormModel.controls['Password'].hasError('required') && service.editUserFormModel.controls['Password'].hasError('hasCapitalCase')">Password must contain at least 1 Capital Case!</mat-error>
-              <mat-error *ngIf="!service.editUserFormModel.controls['Password'].hasError('required') && service.editUserFormModel.controls['Password'].hasError('hasSmallCase')">Password must contain at least 1 Small Case!</mat-error>
-            </mat-form-field>
+          <div formGroupName="Passwords">
+            <div class="form-group">
+              <mat-form-field class="col-md-6">
+                <mat-label>New password</mat-label>
+                <input matInput #iPassword minlength="8" maxlength="512" placeholder="Password" type="password" formControlName="Password" />
+                <mat-hint>8/{{ iPassword.value?.length || 0 }}</mat-hint>
+                <mat-error *ngIf="service.editUserFormModel.get('Passwords.Password').hasError('required')">Password is required!</mat-error>
+                <mat-error *ngIf="!service.editUserFormModel.get('Passwords.Password').hasError('required') && service.editUserFormModel.get('Passwords.Password').hasError('minlength')">Password is too short!</mat-error>
+                <mat-error *ngIf="!service.editUserFormModel.get('Passwords.Password').hasError('required') && service.editUserFormModel.get('Passwords.Password').hasError('hasNumber')">Password must contain at least 1 number!</mat-error>
+                <mat-error *ngIf="!service.editUserFormModel.get('Passwords.Password').hasError('required') && service.editUserFormModel.get('Passwords.Password').hasError('hasCapitalCase')">Password must contain at least 1 Capital Case!</mat-error>
+                <mat-error *ngIf="!service.editUserFormModel.get('Passwords.Password').hasError('required') && service.editUserFormModel.get('Passwords.Password').hasError('hasSmallCase')">Password must contain at least 1 Small Case!</mat-error>
+              </mat-form-field>
 
-            <mat-form-field class="col-md-6">
-              <mat-label>Confirm password</mat-label>
-              <input matInput #iPasswordConfirm placeholder="Password" type="password" formControlName="ConfirmPassword" pattern="{{ iPassword.value }}" [required]="iPassword.value.length > 0" />
-              <mat-hint>8/{{ iPasswordConfirm.value?.length || 0 }}</mat-hint>
-              <mat-error>Passwords do not match!</mat-error>
-            </mat-form-field>
+              <mat-form-field class="col-md-6">
+                <mat-label>Confirm password</mat-label>
+                <input matInput #iPasswordConfirm placeholder="Password" type="password" formControlName="ConfirmPassword" [required]="iPassword.value.length > 0" />
+                <mat-hint>8/{{ iPasswordConfirm.value?.length || 0 }}</mat-hint>
+                <mat-error *ngIf="service.editUserFormModel.get('Passwords.ConfirmPassword').hasError('required')">This is required too!</mat-error>
+                <mat-error *ngIf="service.editUserFormModel.get('Passwords.ConfirmPassword').hasError('passwordMismatch')">Passwords do not match!</mat-error>
+              </mat-form-field>
+            </div>
           </div>
         </div>
 </mat-expansion-panel>
