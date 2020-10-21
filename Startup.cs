@@ -67,7 +67,6 @@ namespace FVRcal
                     options.Password.RequireLowercase = false;
                     options.Password.RequireUppercase = false;
                     options.Password.RequiredLength = 8;
-                    options.User.RequireUniqueEmail = true;
                 }
             );
 

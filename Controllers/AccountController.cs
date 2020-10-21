@@ -15,6 +15,10 @@ using Microsoft.AspNetCore.Authorization;
 using System.Reflection.Metadata.Ecma335;
 using System.Drawing.Printing;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
+using System.Net.Mail;
+using System.Net;
 
 namespace FVRcal.Controllers
 {
@@ -24,14 +28,16 @@ namespace FVRcal.Controllers
     {
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
+        public IConfiguration Configuration { get; }
         private readonly ApplicationSettings _appSettings;
-        
 
-        public AccountController(IOptions<ApplicationSettings> appSettings, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+
+        public AccountController(IOptions<ApplicationSettings> appSettings, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration)
         {
             _appSettings = appSettings.Value;
             _userManager = userManager;
             _signInManager = signInManager;
+            Configuration = configuration;
         }
 
         /*
@@ -57,12 +63,32 @@ namespace FVRcal.Controllers
             try
             {
                 var result = await _userManager.CreateAsync(applicationUser, account.Password);
+
+                if (result.Succeeded)
+                {
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(applicationUser);
+                    var link = Url.Action(nameof(VerifyEmail), "Account", new { userID = applicationUser.Id, token }, Request.Scheme, Request.Host.ToString());
+
+                    SendMail(applicationUser.Email, "FVRcal Verification", $"<a href=\"{link}\">Verify Email</a>");
+                }
+
                 return Ok(result);
             }
             catch(Exception ex)
             {
                 return BadRequest(ex);
             }
+        }
+
+        [HttpGet]
+        [Route("VerifyEmail")]
+        public async Task<IActionResult> VerifyEmail(string userID, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userID);
+            if (user == null) return BadRequest();
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded) return Ok();
+            return BadRequest();
         }
 
         /*
@@ -91,6 +117,7 @@ namespace FVRcal.Controllers
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var securityToken = tokenHandler.CreateToken(tokenDescriptor);
                 var token = tokenHandler.WriteToken(securityToken);
+
                 return Ok(new { token });
             }
             else
@@ -161,11 +188,62 @@ namespace FVRcal.Controllers
                 var changePassword = await _userManager.ChangePasswordAsync(actualUser, account.OldPassword, account.PasswordHash);
                 if(!changePassword.Succeeded) problems = true;
             }
+            if(account.Email != null)
+            {
+                string newEmail = account.Email;
+                string oldEmail = actualUser.Email;
+                string token = await _userManager.GenerateChangeEmailTokenAsync(actualUser, newEmail);
+                string link = Url.Action(nameof(VerifyChangedEmail), "Account", new { userID = actualUser.Id, newMail = newEmail, token }, Request.Scheme, Request.Host.ToString());
+                SendMail(newEmail, "FVRcal Email Verification", $"<a href=\"{link}\">Verify this Email</a>");
+            }
 
             if (!problems)
                 return Ok();
             else
                 return BadRequest();
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("VerifyChangedEmail")]
+        public async Task<IActionResult> VerifyChangedEmail(string userID, string newMail, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userID);
+            if (user == null) return BadRequest();
+            var result = await _userManager.ChangeEmailAsync(user, newMail, token);
+            if (result.Succeeded) return Ok();
+            return BadRequest();
+        }
+
+
+        /*
+         
+         Sending mails
+         
+         */
+
+        public bool SendMail(string email, string subject, string message)
+        {
+            try
+            {
+                string login = Configuration["EmailCredentials:Email"];
+                string password = Configuration["EmailCredentials:Password"];
+                new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    Timeout = 10000,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(login, password)
+                }.Send(new MailMessage { From = new MailAddress(login, "FVRcal"), To = { email }, Subject = subject, Body = message, BodyEncoding = Encoding.UTF8, IsBodyHtml = true }) ;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
