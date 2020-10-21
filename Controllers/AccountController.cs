@@ -204,7 +204,6 @@ namespace FVRcal.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [Route("VerifyChangedEmail")]
         public async Task<IActionResult> VerifyChangedEmail(string userID, string newMail, string token)
         {
