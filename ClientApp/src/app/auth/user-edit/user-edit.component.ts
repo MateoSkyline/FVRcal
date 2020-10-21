@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material';
 export class UserEditComponent implements OnInit {
 
   loaded: boolean = true;
+  emailConfirmed: boolean;
 
   constructor(private router: Router, public service: UserService, private snackBar: MatSnackBar) { }
 
@@ -24,6 +25,8 @@ export class UserEditComponent implements OnInit {
     this.service.getUserEdit().subscribe(
       (res: any) => {
         this.setFormModel(res);
+        console.log(res.emailConfirmed);
+        this.emailConfirmed = res.emailConfirmed;
         this.loaded = true;
       },
       (err: any) => {

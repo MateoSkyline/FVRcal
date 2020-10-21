@@ -15,4 +15,10 @@ namespace FVRcal.Models
         public string PasswordHash { get; set; }
         public string OldPassword { get; set; }
     }
+
+    public class VerifyRegister
+    {
+        public string userID { get; set; }
+        public string token { get; set; }
+    }
 }

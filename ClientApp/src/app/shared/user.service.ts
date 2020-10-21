@@ -140,4 +140,13 @@ export class UserService {
     }
     return this.http.post(this.baseUrl + 'api/Account/UserEdit', body);
   }
+
+  verifyEmailRegister(id, token) {
+    var body = {
+      userID: id,
+      token: token
+    }
+    console.log(body);
+    return this.http.post(this.baseUrl + 'api/Account/VerifyEmail', body);
+  }
 }

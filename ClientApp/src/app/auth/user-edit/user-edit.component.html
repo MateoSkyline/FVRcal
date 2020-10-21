@@ -49,7 +49,11 @@
         </mat-expansion-panel-header>
         <div>
           <div class="form-group">
-            <mat-form-field class="col-md-12">
+            <div class="col-md-1 email-confirmed">
+              <mat-icon aria-hidden="false" aria-label="Example home icon" style="color: green;" *ngIf="emailConfirmed" title="Your email is verified!">check_circle</mat-icon>
+              <mat-icon aria-hidden="false" aria-label="Example home icon" style="color: red;" *ngIf="!emailConfirmed" title="You must verify your email address.">priority_high</mat-icon>
+            </div>
+            <mat-form-field class="col-md-11">
               <mat-label>Email address</mat-label>
               <input matInput #iEmail minlength="{{ iEmail.value == lastEmailUsed ? 121 : 3 }}" placeholder="E-Mail" type="email" formControlName="Email" />
               <mat-hint>{{ iEmail.value?.length || 0 }}/120</mat-hint>

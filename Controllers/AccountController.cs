@@ -19,6 +19,8 @@ using Microsoft.Extensions.Configuration;
 using System.Configuration;
 using System.Net.Mail;
 using System.Net;
+using Renci.SshNet.Messages;
+using System.Web;
 
 namespace FVRcal.Controllers
 {
@@ -67,7 +69,7 @@ namespace FVRcal.Controllers
                 if (result.Succeeded)
                 {
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(applicationUser);
-                    var link = Url.Action(nameof(VerifyEmail), "Account", new { userID = applicationUser.Id, token }, Request.Scheme, Request.Host.ToString());
+                    var link = Url.Action("r-verify", "auth", new { userID = applicationUser.Id, token }, Request.Scheme, Request.Host.ToString());
 
                     SendMail(applicationUser.Email, "FVRcal Verification", $"<a href=\"{link}\">Verify Email</a>");
                 }
@@ -80,15 +82,15 @@ namespace FVRcal.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("VerifyEmail")]
-        public async Task<IActionResult> VerifyEmail(string userID, string token)
+        public async Task<IActionResult> VerifyEmail(VerifyRegister verifyRegister)
         {
-            var user = await _userManager.FindByIdAsync(userID);
-            if (user == null) return BadRequest();
-            var result = await _userManager.ConfirmEmailAsync(user, token);
+            var user = await _userManager.FindByIdAsync(verifyRegister.userID);
+            if (user == null) return BadRequest(new { message = "User with this ID does not exist." });
+            var result = await _userManager.ConfirmEmailAsync(user, verifyRegister.token);
             if (result.Succeeded) return Ok();
-            return BadRequest();
+            return BadRequest(new { message = "Something went wrong when trying to verify this user's email." });
         }
 
         /*

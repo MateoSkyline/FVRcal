@@ -7,6 +7,8 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
 import { UserEditComponent } from './auth/user-edit/user-edit.component';
+import { VerifyemailRegisterComponent } from './auth/verify-email/verifyemail-register/verifyemail-register.component';
+import { VerifyemailUsereditComponent } from './auth/verify-email/verifyemail-useredit/verifyemail-useredit.component';
 
 import { CounterComponent } from './pages/counter/counter.component';
 import { FetchDataComponent } from './pages/fetch-data/fetch-data.component';
@@ -19,7 +21,9 @@ const routes: Routes = [
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
-      { path: 'user-edit', component: UserEditComponent, canActivate: [AuthGuard] }
+      { path: 'user-edit', component: UserEditComponent, canActivate: [AuthGuard] },
+      { path: 'r-verify', component: VerifyemailRegisterComponent },
+      { path: 'e-verify', component: VerifyemailUsereditComponent }
     ]
   }
 ];

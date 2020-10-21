@@ -31,6 +31,8 @@ import { FetchDataComponent } from './pages/fetch-data/fetch-data.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
 import { UserEditComponent } from './auth/user-edit/user-edit.component';
+import { VerifyemailRegisterComponent } from './auth/verify-email/verifyemail-register/verifyemail-register.component';
+import { VerifyemailUsereditComponent } from './auth/verify-email/verifyemail-useredit/verifyemail-useredit.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,9 @@ import { UserEditComponent } from './auth/user-edit/user-edit.component';
     FetchDataComponent,
     RegisterComponent,
     LoginComponent,
-    UserEditComponent
+    UserEditComponent,
+    VerifyemailRegisterComponent,
+    VerifyemailUsereditComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
