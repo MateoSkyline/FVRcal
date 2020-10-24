@@ -84,6 +84,7 @@ namespace FVRcal.Controllers
 
         [HttpPost]
         [Route("VerifyEmail")]
+        //POST : /api/Account/VerifyEmail
         public async Task<IActionResult> VerifyEmail(VerifyRegister verifyRegister)
         {
             var user = await _userManager.FindByIdAsync(verifyRegister.userID);
@@ -194,9 +195,14 @@ namespace FVRcal.Controllers
             {
                 string newEmail = account.Email;
                 string oldEmail = actualUser.Email;
-                string token = await _userManager.GenerateChangeEmailTokenAsync(actualUser, newEmail);
-                string link = Url.Action(nameof(VerifyChangedEmail), "Account", new { userID = actualUser.Id, newMail = newEmail, token }, Request.Scheme, Request.Host.ToString());
-                SendMail(newEmail, "FVRcal Email Verification", $"<a href=\"{link}\">Verify this Email</a>");
+                ApplicationUser checkEmail = await _userManager.FindByEmailAsync(account.Email);
+                if(checkEmail != null) problems = true;
+                else
+                {
+                    string token = await _userManager.GenerateChangeEmailTokenAsync(actualUser, newEmail);
+                    string link = Url.Action("e-verify", "auth", new { userID = actualUser.Id, newMail = newEmail, token }, Request.Scheme, Request.Host.ToString());
+                    SendMail(newEmail, "FVRcal Email Verification", $"<a href=\"{link}\">Verify this Email</a>");
+                }                
             }
 
             if (!problems)
@@ -205,13 +211,14 @@ namespace FVRcal.Controllers
                 return BadRequest();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("VerifyChangedEmail")]
-        public async Task<IActionResult> VerifyChangedEmail(string userID, string newMail, string token)
+        //POST : /api/Account/VerifyChangedEmail
+        public async Task<IActionResult> VerifyChangedEmail(VerifyEmailEdit verifyEmailEdit)
         {
-            var user = await _userManager.FindByIdAsync(userID);
+            var user = await _userManager.FindByIdAsync(verifyEmailEdit.userID);
             if (user == null) return BadRequest();
-            var result = await _userManager.ChangeEmailAsync(user, newMail, token);
+            var result = await _userManager.ChangeEmailAsync(user, verifyEmailEdit.newMail, verifyEmailEdit.token);
             if (result.Succeeded) return Ok();
             return BadRequest();
         }

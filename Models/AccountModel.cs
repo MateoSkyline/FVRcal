@@ -21,4 +21,11 @@ namespace FVRcal.Models
         public string userID { get; set; }
         public string token { get; set; }
     }
+
+    public class VerifyEmailEdit
+    {
+        public string userID { get; set; }
+        public string newMail { get; set; }
+        public string token { get; set; }
+    }
 }

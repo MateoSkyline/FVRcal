@@ -19,8 +19,6 @@ export class VerifyemailRegisterComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       const id = params['userID'];
       const token = params['token'];
-      console.log(id);
-      console.log(token);
       this.service.verifyEmailRegister(id, token).subscribe(
         (res: any) => {
           this.snackBar.open("Your email address is now verified!", "OK", { duration: 5000, });

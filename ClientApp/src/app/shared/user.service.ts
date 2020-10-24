@@ -146,7 +146,15 @@ export class UserService {
       userID: id,
       token: token
     }
-    console.log(body);
     return this.http.post(this.baseUrl + 'api/Account/VerifyEmail', body);
+  }
+
+  verifyEmailEdit(id, mail, token) {
+    var body = {
+      userID: id,
+      newMail: mail,
+      token: token
+    }
+    return this.http.post(this.baseUrl + 'api/Account/VerifyChangedEmail', body);
   }
 }

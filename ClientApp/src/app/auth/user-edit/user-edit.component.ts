@@ -25,7 +25,6 @@ export class UserEditComponent implements OnInit {
     this.service.getUserEdit().subscribe(
       (res: any) => {
         this.setFormModel(res);
-        console.log(res.emailConfirmed);
         this.emailConfirmed = res.emailConfirmed;
         this.loaded = true;
       },
