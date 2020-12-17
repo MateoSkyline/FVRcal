@@ -17,6 +17,7 @@ import {
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AuthInterceptor } from './auth/auth.interceptor';
@@ -30,6 +31,7 @@ import { CounterComponent } from './pages/counter/counter.component';
 import { FetchDataComponent } from './pages/fetch-data/fetch-data.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
+import { ForgotPasswordDialogComponent } from './auth/login/forgotPasswordDialog/forgotPasswordDialog.component';
 import { UserEditComponent } from './auth/user-edit/user-edit.component';
 import { VerifyemailRegisterComponent } from './auth/verify-email/verifyemail-register/verifyemail-register.component';
 import { VerifyemailUsereditComponent } from './auth/verify-email/verifyemail-useredit/verifyemail-useredit.component';
@@ -44,6 +46,7 @@ import { VerifyemailUsereditComponent } from './auth/verify-email/verifyemail-us
     FetchDataComponent,
     RegisterComponent,
     LoginComponent,
+    ForgotPasswordDialogComponent,
     UserEditComponent,
     VerifyemailRegisterComponent,
     VerifyemailUsereditComponent
@@ -65,13 +68,17 @@ import { VerifyemailUsereditComponent } from './auth/verify-email/verifyemail-us
     MatSnackBarModule,
     MatExpansionModule,
     MatCheckboxModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatDialogModule
   ],
   providers: [UserService, {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptor,
     multi: true
   }],
+  entryComponents: [
+    ForgotPasswordDialogComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -12,6 +12,7 @@ export class UserEditComponent implements OnInit {
 
   loaded: boolean = true;
   emailConfirmed: boolean;
+  lastEmailUsed: string = "fvrcal.noreply@gmail.com";
 
   constructor(private router: Router, public service: UserService, private snackBar: MatSnackBar) { }
 

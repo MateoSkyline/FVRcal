@@ -39,6 +39,13 @@ export class UserService {
     Password: ['', Validators.required]
   })
 
+  forgotPasswordFormModel = this.formBuilder.group({
+    Email: ['', [
+      Validators.email,
+      Validators.required
+    ]]
+  })
+
   editUserFormModel = this.formBuilder.group({
     FirstName: ['', [
       Validators.required,
@@ -117,6 +124,13 @@ export class UserService {
   logout() {
     this.router.navigateByUrl('/');
     return localStorage.removeItem('token');
+  }
+
+  forgotPassword() {
+    var body = {
+      Email: this.forgotPasswordFormModel.value.Email
+    }
+    return this.http.post(this.baseUrl + 'api/Account/ForgotPassword', body);
   }
 
   getUserProfile() {

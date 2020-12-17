@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { resolveAny } from 'dns';
 import { UserService } from '../../shared/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ForgotPasswordDialogComponent } from './forgotPasswordDialog/forgotPasswordDialog.component';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +16,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class LoginComponent implements OnInit {
   loaded: boolean = true;
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private formBuilder: FormBuilder, private router: Router, public service: UserService, private snackBar: MatSnackBar) { }
+  constructor(
+    private http: HttpClient,
+    @Inject('BASE_URL') private baseUrl: string,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    public service: UserService,
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog
+  ) { }
 
   ngOnInit() {
     this.service.loginFormModel.reset();
@@ -43,6 +53,27 @@ export class LoginComponent implements OnInit {
         }
       }
     )
+  }
+
+  forgotPassword() {
+    const dialogRef = this.dialog.open(ForgotPasswordDialogComponent, {
+      width: '250px'
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.loaded = false;
+      this.service.forgotPassword().subscribe(
+        (res: any) => {
+          this.snackBar.open("A password reset link has been sent to your email address.", "OK", { duration: 5000, });
+          this.loaded = true;
+        },
+        err => {
+          this.snackBar.open("An error occured. Try again.", "OK", { duration: 5000, });
+          console.error(err);
+          this.loaded = true;
+        }
+      )
+    })
   }
 
 }
