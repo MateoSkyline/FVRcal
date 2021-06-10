@@ -18,8 +18,6 @@ namespace FVRcal.Models
         {
         }
 
-        public DbSet<Storage> Storage { get; set; }
-        public DbSet<Storage_Type> Storage_Type { get; set; }
     }
 
     public class Account
@@ -32,28 +30,63 @@ namespace FVRcal.Models
         public string Password { get; set; }
     }
 
-    public class Storage
-    {
-        [Key]
-        public int Storage_id { get; set; }
-        public int User_Id { get; set; }
-        public int Type { get; set; }
-        public DateTime Time { get; set; }
-        [StringLength(64)]
-        public string Flags { get; set; }
-    }
-
-    public class Storage_Type
-    {
-        [Key]
-        public int St_Type_Id { get; set; }
-        [StringLength(12)]
-        public string Type { get; set; }
-    }
-
     public class LoginModel
     {
         public string Email { get; set; }
         public string Password { get; set; }
     }
+
+    //public class Teams
+    //{
+    //    public int Id { get; set; }
+    //    [StringLength(60)]
+    //    public string Name { get; set; }
+    //    [StringLength(2000)]
+    //    public string Description { get; set; }
+    //    public int Type_Id { get; set; }
+    //    public int Status_Id { get; set; }
+    //    public int Visibility { get; set; }
+    //    public decimal Commission { get; set; }
+    //}
+
+    //public class TeamRoles
+    //{
+    //    public int Id { get; set; }
+    //    [StringLength(60)]
+    //    public string Name { get; set; }
+    //}
+
+    //public class TeamAssignments
+    //{
+    //    public int Id { get; set; }
+    //    public int Team_Id { get; set; }
+    //    public int User_Id { get; set; }
+    //    public int Role_Id { get; set; }
+    //    public decimal Share { get; set; }
+    //}
+
+    //public class Orders
+    //{
+    //    public int Id { get; set; }
+    //    public int Team_Id { get; set; }
+    //    [StringLength(120)]
+    //    public string Name { get; set; }
+    //    [StringLength(2000)]
+    //    public string Description { get; set; }
+    //    [StringLength(90)]
+    //    public string Recipient { get; set; }
+    //    public decimal Commission { get; set; }
+    //    public decimal Amount { get; set; }
+    //    public int Currency_Id { get; set; }
+    //    public DateTime Date { get; set; }
+    //}
+
+    //public class OrderAssignments
+    //{
+    //    public int Id { get; set; }
+    //    public int Order_Id { get; set; }
+    //    public int User_Id { get; set; }
+    //    public int Role_Id { get; set; }
+    //    public decimal Share { get; set; }
+    //}
 }
